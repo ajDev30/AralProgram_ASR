@@ -63,8 +63,13 @@ if (isset($_POST['login'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['name']    = $user['name'];
         $_SESSION['email']   = $user['email'];
+        $_SESSION['role']    = $user['role'];
 
-        header("Location: landing.html");
+        if ($user['role'] === 'admin') {
+          header ("Location: Admin/dashboard.html");
+        } else {
+          header ("Location: landing.html");
+        }
         exit();
     } else {
         $_SESSION['login_error'] = 'Incorrect email or password.';
