@@ -66,7 +66,7 @@ if (isset($_POST['login'])) {
         $_SESSION['role']    = $user['role'];
 
         if ($user['role'] === 'admin') {
-          header ("Location: Admin/dashboard.html");
+          header ("Location: Admin/dashboard.php");
         } else {
           header ("Location: landing.html");
         }
