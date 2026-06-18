@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #84a4ea;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width: 220px;
+    padding: 25px;
+}
+
+.profile-box {
+    background: #9cb3e9;
+    border-radius: 20px;
+    padding: 35px 20px;
+    font-size: 18px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 25px;
+}
+
+.sidebar nav {
+    background: #99afe6;
+    border-radius: 25px;
+    padding: 20px 0;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 16px 25px;
+    text-decoration: none;
+    color: black;
+    font-size: 20px;
+}
+
+.sidebar nav a.active {
+    background: #a7d8e8;
+    border-radius: 20px;
+    margin: 0 10px;
+}
+
+/* CONTENT */
+
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+    margin-bottom: 15px;
+}
+
+.btn-add,
+.btn-remove {
+    text-decoration: none;
+    padding: 10px 35px;
+    border-radius: 25px;
+    color: black;
+    border: 1px solid #444;
+}
+
+.btn-add {
+    background: #9be5b0;
+}
+
+.btn-remove {
+    background: #f0a3a3;
+}
+
+/* CATEGORY */
+
+.category-bar {
+    background: #d8d8dd;
+    border-radius: 25px;
+    padding: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.category-bar a {
+    text-decoration: none;
+    color: black;
+    padding: 10px 25px;
+    border-radius: 25px;
+    border: 1px solid #555;
+    background: #e6e6ea;
+}
+
+.category-bar a.selected {
+    background: #a7ddd2;
+}
+
+/* MATERIAL GRID */
+
+.materials-grid {
+    margin-top: 25px;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+    gap: 40px;
+}
+
+/* CARD */
+
+.card {
+    background: #d9d9d9;
+    border-radius: 8px;
+    padding: 25px;
+    text-align: center;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+    min-height: 220px;
+}
+
+.file-icon {
+    font-size: 80px;
+}
+
+.title {
+    margin-top: 15px;
+    font-weight: bold;
+    word-break: break-word;
+}
+
+.actions {
+    margin-top: 15px;
+
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.open-btn {
+    text-decoration: none;
+    background: #83d1ff;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+.delete-btn {
+    text-decoration: none;
+    background: #ff9e9e;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+
+.empty {
+    font-size: 20px;
+    padding: 30px;
+}
