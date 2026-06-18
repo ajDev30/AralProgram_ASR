@@ -34,111 +34,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
 
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#87a5e6;
-}
-
-.container{
-    display:flex;
-    min-height:100vh;
-}
-
-.sidebar{
-    width:250px;
-    padding:20px;
-}
-
-.profile-box{
-    border:2px solid #3498db;
-    padding:20px;
-    background:white;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-weight:bold;
-}
-
-.menu{
-    background:rgba(255,255,255,.2);
-    border-radius:15px;
-    padding:10px;
-}
-
-.menu a{
-    display:block;
-    padding:12px;
-    text-decoration:none;
-    color:#000;
-    margin:5px 0;
-}
-
-.menu a:hover{
-    background:rgba(255,255,255,.3);
-    border-radius:8px;
-}
-
-.content{
-    flex:1;
-    padding:20px;
-}
-
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.search-box input{
-    padding:10px;
-    width:300px;
-    border-radius:20px;
-    border:1px solid #ccc;
-}
-
-.add-btn{
-    padding:10px 20px;
-    border:none;
-    border-radius:20px;
-    background:#4a7df5;
-    color:white;
-    cursor:pointer;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:rgba(255,255,255,.4);
-    border-radius:15px;
-    overflow:hidden;
-}
-
-th, td{
-    padding:12px;
-    border:1px solid rgba(0,0,0,.2);
-    text-align:left;
-}
-
-th{
-    background:rgba(255,255,255,.6);
-}
-
-.role-admin{
-    color:green;
-    font-weight:bold;
-}
-
-.role-student{
-    color:#333;
-}
-
-.logout{
-    color:red;
-}
-</style>
 
 </head>
 <body>
@@ -154,7 +51,7 @@ th{
 
         <div class="menu">
             <a href="#">Student</a>
-            <a href="#">Materials</a>
+            <a href="material.php">Materials</a>
             <a href="#">Monitor</a>
             <a href="../logout.php" class="logout">Log Out</a>
         </div>
