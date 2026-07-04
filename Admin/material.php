@@ -98,11 +98,8 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="top-actions">
 
-            <a
-                class="btn-add"
-                href="upload_material.php"
-            >
-                ADD
+            <a class="btn-add" href="../Admin/upload_material.php" onclick="openUploadModal(event)">
+              ADD
             </a>
 
             <a
@@ -209,6 +206,32 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
     </main>
+
+</div>
+<!-- UPLOAD MODAL -->
+<div id="uploadModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+
+    <div style="background:#fff; padding:20px; width:400px; border-radius:10px;">
+
+        <h3>Upload PDF Material</h3>
+
+        <input type="text" id="title" placeholder="Title" style="width:100%; margin-bottom:10px;">
+
+        <select id="category" style="width:100%; margin-bottom:10px;">
+            <option value="instructional">instructional</option>
+            <option value="struggling">struggling</option>
+            <option value="non-reader">non-reader</option>
+            <option value="assessment">assessment</option>
+        </select>
+
+        <input type="file" id="pdf" accept="application/pdf">
+
+        <br><br>
+
+        <button onclick="uploadFile()">Upload</button>
+        <button onclick="closeUploadModal()">Cancel</button>
+
+    </div>
 
 </div>
 
