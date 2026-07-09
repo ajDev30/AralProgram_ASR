@@ -13,15 +13,11 @@ if (empty($_SESSION["user_id"])) {
 $currentCategory = $_GET["category"] ?? "instructional";
 
 // Fetch current user details
-$userStmt = $pdo->prepare("
-    SELECT name
-    FROM users
-    WHERE id = ?
-");
+$userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
 $userStmt->execute([$_SESSION["user_id"]]);
 $currentUser = $userStmt->fetch();
 
-// Fetch materials filtering by category (excluding binary data here for performance)
+// Fetch materials filtering by category
 $stmt = $pdo->prepare("
     SELECT id, title, file_name, category, uploaded_at
     FROM materials
@@ -35,7 +31,7 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Materials</title>
+    <title>Materials Management</title>
     <link rel="stylesheet" href="material.css">
 </head>
 <body>
@@ -63,25 +59,16 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
          </div>
 
         <div class="category-bar">
-            <a href="?category=instructional" class="<?= $currentCategory === 'instructional' ? 'selected' : '' ?>">
-                instructional
-            </a>
-            <a href="?category=struggling" class="<?= $currentCategory === 'struggling' ? 'selected' : '' ?>">
-                struggling
-            </a>
-            <a href="?category=non-reader" class="<?= $currentCategory === 'non-reader' ? 'selected' : '' ?>">
-                non-reader
-            </a>
-            <a href="?category=assessment" class="<?= $currentCategory === 'assessment' ? 'selected' : '' ?>">
-                assessment
-            </a>
+            <?php foreach (['instructional', 'struggling', 'non-reader', 'assessment'] as $cat): ?>
+                <a href="?category=<?= $cat ?>" class="<?= $currentCategory === $cat ? 'selected' : '' ?>">
+                    <?= $cat ?>
+                </a>
+            <?php endforeach; ?>
         </div>
 
         <div class="materials-grid">
             <?php if (empty($materials)): ?>
-                <div class="empty">
-                    No materials uploaded.
-                </div>
+                <div class="empty">No materials uploaded.</div>
             <?php else: ?>
                 <?php foreach ($materials as $material): ?>
                     <div class="card">
@@ -89,13 +76,18 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="title">
                             <?= htmlspecialchars($material["title"]) ?>
                         </div>
-                        <div class="actions">
-                            <a class="open-btn" href="view_material.php?id=<?= $material['id'] ?>" target="_blank">
-                                Open
+                        <div class="actions" style="display: flex; flex-direction: column; gap: 6px;">
+                            <a class="open-btn" href="view_material.php?id=<?= $material['id'] ?>" target="_blank" style="text-align: center;">
+                                Open File
                             </a>
+                            
+                            <a class="open-btn" href="quiz_manager.php?material_id=<?= $material['id'] ?>&category=<?= urlencode($currentCategory) ?>" style="background: #28a745; text-align: center; border-radius: 4px; text-decoration: none; color: white; padding: 6px 0;">
+                                📝 Manage Quiz
+                            </a>
+
                             <a class="delete-btn" 
                                href="delete_material.php?id=<?= $material['id'] ?>&category=<?= urlencode($currentCategory) ?>" 
-                               onclick="return confirm('Delete material?')">
+                               onclick="return confirm('Delete material? This will cascade delete its associated quizzes and questions.')" style="text-align: center;">
                                 Delete
                             </a>
                         </div>
@@ -105,7 +97,6 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
     </main>
-
 </div>
 
 <div id="uploadModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index: 9999;">
@@ -134,15 +125,8 @@ $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <script>
-function openUploadModal() {
-    document.getElementById('uploadModal').style.display = 'flex';
-}
-
-function closeUploadModal() {
-    document.getElementById('uploadModal').style.display = 'none';
-}
+function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
 </script>
-
-<script src="scripts/script.js"></script>
 </body>
 </html>
