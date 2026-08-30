@@ -58,3 +58,8 @@ moodle-plugin-ci.phar
 .hugo_build.lock
 phpcs.xml
 jsconfig.json
+
+# Local ASR secrets
+mod/readingassessment/venv_asr/.env
+
+mod/readingassessment/venv_asr/
