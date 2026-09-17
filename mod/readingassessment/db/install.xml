@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/readingassessment/db" VERSION="20240814" COMMENT="XMLDB file for Moodle mod/readingassessment"
+<XMLDB PATH="mod/readingassessment/db" VERSION="20240917" COMMENT="XMLDB file for Moodle mod/readingassessment ARAL Reading Program"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,6 +20,9 @@
         <FIELD NAME="maxattempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="100" SEQUENCE="false"/>
+        <FIELD NAME="target_grade" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="7" SEQUENCE="false"/>
+        <FIELD NAME="is_aral" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="assessment_mode" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pre_post" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
@@ -30,20 +33,114 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="readingassessment_attempts" COMMENT="Stores student assessment attempt results">
+
+    <TABLE NAME="readingassessment_profiles" COMMENT="Public student profiling intake records for ARAL Reading Program">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="student_name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="student_id_number" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade_level" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="7" SEQUENCE="false"/>
+        <FIELD NAME="section" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="school_year" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="reading_level_category" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="token" UNIQUE="true" FIELDS="token"/>
+        <INDEX NAME="grade_level" UNIQUE="false" FIELDS="grade_level"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_passages" COMMENT="Grade 7-10 reading passages repository">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="readingassessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="grade_level" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="7" SEQUENCE="false"/>
+        <FIELD NAME="passage_type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="screening" SEQUENCE="false"/>
+        <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="word_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="readingassessmentid" TYPE="foreign" FIELDS="readingassessmentid" REFTABLE="readingassessment" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="grade_type" UNIQUE="false" FIELDS="grade_level, passage_type"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_questionnaires" COMMENT="Pre and Post assessment questionnaire modules">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="readingassessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pre" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="readingassessmentid" TYPE="foreign" FIELDS="readingassessmentid" REFTABLE="readingassessment" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_questions" COMMENT="Questions for reading questionnaires and passage comprehension">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="questionnaireid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="passageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="question_text" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="question_type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="multiple_choice" SEQUENCE="false"/>
+        <FIELD NAME="options_json" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="correct_answer" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="questionnaireid" UNIQUE="false" FIELDS="questionnaireid"/>
+        <INDEX NAME="passageid" UNIQUE="false" FIELDS="passageid"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_attempts" COMMENT="Stores student assessment attempt results and scores">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="readingassessmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="profileid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="attempt" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="assessment_phase" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="screening" SEQUENCE="false"/>
+        <FIELD NAME="grade_level" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="7" SEQUENCE="false"/>
+        <FIELD NAME="passageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="transcript" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="accuracy_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
         <FIELD NAME="comprehension_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+        <FIELD NAME="oral_reading_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
         <FIELD NAME="final_grade" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
         <FIELD NAME="reading_time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="reading_speed" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+        <FIELD NAME="words_per_minute" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+        <FIELD NAME="wpm" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+        <FIELD NAME="miscue_count" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="level_category" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="action_plan" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="miscues_json" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="answers_json" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="teacher_reviewed" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="teacher_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="teacher_notes" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="timereviewed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -52,7 +149,41 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="profileid" UNIQUE="false" FIELDS="profileid"/>
       </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_responses" COMMENT="Questionnaire and comprehension student responses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="user_answer" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="is_correct" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="readingassessment_attempts" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="readingassessment_miscues" COMMENT="Granular miscue logs for speech assessment">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="word" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expected_word" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="miscue_type" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="word_index" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="phoneme_score" TYPE="number" LENGTH="10" DECIMALS="2" NOTNULL="true" DEFAULT="0.00" SEQUENCE="false"/>
+        <FIELD NAME="teacher_override" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="teacher_comment" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="readingassessment_attempts" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

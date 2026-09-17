@@ -44,10 +44,13 @@ $where_sql = implode(" AND ", $where_clauses);
 
 // Handle CSV Export
 if ($action === 'export_csv') {
-    $sql = "SELECT a.*, u.firstname, u.lastname, u.email, ra.name as activityname
+    $sql = "SELECT a.*, u.firstname, u.lastname, u.email,
+                   p.student_name, p.student_id_number, p.grade_level as profile_grade,
+                   ra.name as activityname
             FROM {readingassessment_attempts} a
-            JOIN {user} u ON a.userid = u.id
-            JOIN {readingassessment} ra ON a.readingassessmentid = ra.id
+            LEFT JOIN {user} u ON a.userid = u.id
+            LEFT JOIN {readingassessment_profiles} p ON a.profileid = p.id
+            LEFT JOIN {readingassessment} ra ON a.readingassessmentid = ra.id
             WHERE {$where_sql}
             ORDER BY a.timecompleted DESC";
     $attempts = $DB->get_records_sql($sql, $params);
@@ -58,21 +61,24 @@ if ($action === 'export_csv') {
     header('Content-Disposition: attachment; filename=' . $filename);
 
     $out = fopen('php://output', 'w');
-    fputcsv($out, ['Attempt ID', 'Activity Name', 'First Name', 'Last Name', 'Email', 'Attempt #', 'Reading Speed (WPM)', 'Accuracy (%)', 'Reading Time (s)', 'Comprehension (%)', 'Final Grade (%)', 'Date Completed']);
+    fputcsv($out, ['Attempt ID', 'Activity Name', 'Student Name', 'LRN / ID', 'Grade Level', 'Attempt #', 'Reading Speed (WPM)', 'Accuracy (%)', 'Comprehension (%)', 'ARAL Category', 'Miscues Count', 'Teacher Reviewed', 'Date Completed']);
 
     foreach ($attempts as $att) {
+        $sname = !empty($att->student_name) ? $att->student_name : (trim(($att->firstname ?? '') . ' ' . ($att->lastname ?? '')));
+        $glevel = !empty($att->grade_level) ? $att->grade_level : ($att->profile_grade ?? 7);
         fputcsv($out, [
             $att->id,
-            $att->activityname,
-            $att->firstname,
-            $att->lastname,
-            $att->email,
+            $att->activityname ?: 'ARAL Assessment',
+            $sname,
+            $att->student_id_number ?: 'N/A',
+            'Grade ' . $glevel,
             $att->attempt,
             $att->reading_speed ?? 0,
             $att->accuracy_score,
-            $att->reading_time ?? 0,
             $att->comprehension_score,
-            $att->final_grade,
+            $att->level_category ?: 'Pending',
+            $att->miscue_count ?? 0,
+            $att->teacher_reviewed ? 'Yes' : 'No',
             userdate($att->timecompleted)
         ]);
     }
@@ -92,10 +98,13 @@ $PAGE->set_context($context);
 $PAGE->requires->css('/mod/readingassessment/styles.css');
 
 // Fetch attempts
-$sql = "SELECT a.*, u.firstname, u.lastname, u.email, u.picture, u.imagealt, ra.name as activityname
+$sql = "SELECT a.*, u.firstname, u.lastname, u.email, u.picture, u.imagealt,
+               p.student_name, p.student_id_number, p.grade_level as profile_grade,
+               ra.name as activityname
         FROM {readingassessment_attempts} a
-        JOIN {user} u ON a.userid = u.id
-        JOIN {readingassessment} ra ON a.readingassessmentid = ra.id
+        LEFT JOIN {user} u ON a.userid = u.id
+        LEFT JOIN {readingassessment_profiles} p ON a.profileid = p.id
+        LEFT JOIN {readingassessment} ra ON a.readingassessmentid = ra.id
         WHERE {$where_sql}
         ORDER BY a.timecompleted DESC";
 $attempts = $DB->get_records_sql($sql, $params);

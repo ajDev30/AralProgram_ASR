@@ -48,6 +48,28 @@ class mod_readingassessment_mod_form extends moodleform_mod {
         $mform->setDefault('activitytype', 'assessment');
         $mform->addHelpButton('activitytype', 'activitytype', 'mod_readingassessment');
 
+        // Target Grade Level (ARAL Program Grades 7-10)
+        $grade_options = [
+            7 => 'Grade 7',
+            8 => 'Grade 8',
+            9 => 'Grade 9',
+            10 => 'Grade 10'
+        ];
+        $mform->addElement('select', 'target_grade', '🎯 ARAL Target Grade Level', $grade_options);
+        $mform->setDefault('target_grade', 7);
+
+        // ARAL Assessment Mode
+        $mode_options = [
+            'pre_post' => '🔄 Pre & Post Assessment (Progress Monitoring)',
+            'screening' => '🔍 Screening Assessment Only',
+            'practice' => '🏋️ Practice / Coaching Mode'
+        ];
+        $mform->addElement('select', 'assessment_mode', '📋 ARAL Assessment Mode', $mode_options);
+        $mform->setDefault('assessment_mode', 'pre_post');
+
+        $mform->addElement('selectyesno', 'is_aral', '⭐ ARAL Reading Program Aligned');
+        $mform->setDefault('is_aral', 1);
+
 
         // =========================================================================
         // SECTION 2: TEACHER VOICE & AI COACHING CONFIGURATION

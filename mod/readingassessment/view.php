@@ -243,13 +243,21 @@ $can_grade = has_capability('mod/readingassessment:grade', $context);
 
     <!-- Teacher Dashboard Access Bar -->
     <?php if ($can_grade): ?>
-        <div class="ra-teacher-bar">
-            <div class="ra-teacher-title">
-                <span>👩‍🏫</span> <span>Teacher Dashboard:</span>
+        <div class="ra-teacher-bar" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; background: #f8fafc; padding: 12px 18px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <div class="ra-teacher-title" style="font-weight: 700; color: #1e293b; margin-right: 8px;">
+                <span>👩‍🏫</span> <span>ARAL Teacher Hub:</span>
             </div>
-            <a href="<?php echo new moodle_url('/mod/readingassessment/report.php', ['id' => $cm->id, 'courseid' => $course->id]); ?>" 
-               class="ra-teacher-btn">
-                <span>📊</span> ARAL Program: Student Reading Progress
+            <a href="<?php echo new moodle_url('/mod/readingassessment/report.php', ['id' => $cm->id, 'courseid' => $course->id]); ?>" class="btn btn-sm btn-primary font-weight-bold">
+                📊 Reading Analytics
+            </a>
+            <a href="<?php echo new moodle_url('/mod/readingassessment/progress.php', ['id' => $cm->id]); ?>" class="btn btn-sm btn-info text-white font-weight-bold">
+                📈 Pre vs. Post Growth
+            </a>
+            <a href="<?php echo new moodle_url('/mod/readingassessment/edit_passage.php', ['id' => $cm->id]); ?>" class="btn btn-sm btn-secondary font-weight-bold">
+                📖 Grade 7–10 Passages
+            </a>
+            <a href="<?php echo new moodle_url('/mod/readingassessment/profile.php', ['id' => $cm->id]); ?>" class="btn btn-sm btn-outline-primary font-weight-bold" target="_blank">
+                👤 Student Intake Form
             </a>
         </div>
     <?php endif; ?>
