@@ -313,6 +313,18 @@ $can_grade = has_capability('mod/readingassessment:grade', $context);
 
     <?php else: ?>
         <!-- Independent Assessment Mode -->
+        <?php if (($readingassessment->assessment_mode ?? 'pre_post') === 'pre_post'): ?>
+            <div class="alert alert-primary d-flex justify-content-between align-items-center mb-3" style="border-radius: 12px; background: linear-gradient(135deg, #e0f2fe, #f0fdf4); border: 1px solid #bae6fd; color: #0369a1; padding: 16px 20px;">
+                <div>
+                    <strong style="font-size: 1.05rem;">📋 ARAL Pre-Assessment Baseline Workflow</strong>
+                    <div style="font-size: 0.88rem; color: #0284c7; margin-top: 2px;">Begin with the pre-assessment questionnaire self-reflection before taking the oral reading assessment.</div>
+                </div>
+                <a href="<?php echo new moodle_url('/mod/readingassessment/questionnaire.php', ['id' => $cm->id, 'type' => 'pre']); ?>" class="btn btn-primary font-weight-bold shadow-sm" style="border-radius: 8px; text-decoration: none;">
+                    Start Pre-Assessment &rarr;
+                </a>
+            </div>
+        <?php endif; ?>
+
         <div class="ra-card">
             <div class="ra-card-title">📖 Reading Passage</div>
             <div class="ra-passage-box" id="ra-passage-text">
